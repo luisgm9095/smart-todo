@@ -1,0 +1,19 @@
+{
+  "name": "smart-todo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luisgm9095/smart-todo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luisgm9095/smart-todo/issues"
+  },
+  "homepage": "https://github.com/luisgm9095/smart-todo#readme"
+}
