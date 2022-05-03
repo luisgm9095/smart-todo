@@ -1,0 +1,36 @@
+.Checkbox {
+    position: relative;
+    cursor: pointer;
+    width: 2rem;
+    height: 2rem;
+    background-color: #eee;
+    font-size: 2rem;
+
+    &:hover {
+        background-color: #ccc;
+    }
+
+    &--checked {
+        background-color: #2196F3;
+        transition: background-color 0.5s ease;
+
+        &:hover {
+            background-color: #1186e3;
+        }
+
+        &:after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0.6rem;
+            top: 0.2rem;
+            width: 0.5rem;
+            height: 1rem;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    }
+}

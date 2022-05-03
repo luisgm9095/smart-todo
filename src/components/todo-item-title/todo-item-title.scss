@@ -1,0 +1,27 @@
+.TodoItemTitle {
+    &_input {
+        width: auto;
+        max-width: 50%;
+        font-size: 2rem;
+        color: #333;
+        border: none;
+        outline: none;
+        max-height: 2rem;
+    }
+
+    &_label {
+        font-size: 2rem;
+        max-height: 2rem;
+        line-height: 2rem;
+        max-width: 50%;
+        width: auto;
+        text-align: start;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+        
+        &--editable {
+            cursor: text;
+        }
+    }
+}

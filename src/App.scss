@@ -1,0 +1,49 @@
+.App {
+  text-align: center;
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+
+  &_list {
+    padding-top: 10rem;
+    max-width: 80vmin;
+    width: 80vmin;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &_editmode {
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    right: 0;
+    margin: 0.5rem;
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 5rem;
+    height: 5rem;
+    background-color: #8884;
+    border-radius: 2.5rem;
+    cursor: pointer;
+    fill: #fff4;
+    transition: background-color 0.25s ease, fill 0.25s ease;
+    
+    &:hover {
+      background-color: #0176c3;
+      transition: background-color 0.25s ease, fill 0.25s ease;
+    }
+
+    &--active {
+      background-color: #2196F3;
+      fill: #fff;
+      transition: background-color 0.25s ease, fill 0.25s ease;
+    }
+  }
+}
