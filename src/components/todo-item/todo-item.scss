@@ -9,26 +9,12 @@
         cursor: pointer;
     }
 
-    &_panel {
-        background: #aaa4;
-        max-height: 1rem;
-        overflow: hidden;
-        transition: max-height 1s ease;
+    &_panel {        
+        display: flex;
         
         &--indented {
             margin-left: $indentation;
         }
-
-        &:hover {
-            max-height: 3rem;
-            transition: max-height 1s ease;
-        }
-
-    }
-    
-    &_dummy {
-        margin-top: 0.25rem;
-        height: 3rem;
     }
 
     &_info {

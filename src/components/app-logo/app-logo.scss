@@ -6,7 +6,7 @@ $logo-width: min(90vw - $icon-size - $icon-size, 80vmin);
   box-sizing: border-box;
   position: absolute;
   top: 0;
-  left: calc(50% - calc($logo-width / 2));
+  left: calc(50% - calc($logo-width / 2) - $icon-padding);
   width: $logo-width;
   max-width: $logo-width;
   margin: $icon-margin;

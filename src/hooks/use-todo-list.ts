@@ -11,7 +11,6 @@ export const useTodoList = () => {
     const selectItem = useCallback((id: TodoListId) => {
         const item = items.find(hasTodoListId(id));
         if(item) {
-            console.log(`item selected ${id}`);
             setSelectedItem(item);
         }
     }, [items]);

@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useState } from 'react';
+import { MouseEvent, useCallback } from 'react';
 import cn from 'classnames';
 import { AddTodoCallback, GetTodosCallback, Todo } from '../../utils/todo';
 import './todo-item.scss';
@@ -30,8 +30,6 @@ export const TodoItem = ({
     const { editMode } = useEditModeContext();
     const { selectedTodoId, setSelectedTodoId } = useSelectTodoContext();
     const { title, id, checked } = item;
-    const [addTopVisible, setAddTopVisible] = useState(false);
-    const [addChildVisible, setAddChildVisible] = useState(false);
     const children = getTodos(id);
     const selected = selectedTodoId === id;
 
@@ -71,8 +69,8 @@ export const TodoItem = ({
     return (
         <li className={cn(className, 'TodoItem', { 'TodoItem--editable': editMode, 'TodoItem--selected': selected })} onClick={handleClickItem}>
             { editMode && selected &&
-                <div className='TodoItem_panel' onMouseEnter={() => setAddTopVisible(true)} onMouseLeave={() => setAddTopVisible(false)}>    
-                    { addTopVisible ? <TodoAdd onClick={addSiblingTop}/> : <div className='TodoItem_dummy'></div> }     
+                <div className='TodoItem_panel'>
+                    <TodoAdd onClick={addSiblingTop}/>
                 </div>
             }
             <div className='TodoItem_info'>
@@ -86,8 +84,8 @@ export const TodoItem = ({
             </div>
             {!!children?.length && <TodoList className='TodoItem_children' addTodo={addTodo} getTodos={getTodos} updateTodo={updateTodo} deleteTodo={deleteTodo} parentId={id} />}
             { editMode && selected &&
-                <div className='TodoItem_panel TodoItem_panel--indented'  onMouseEnter={() => setAddChildVisible(true)} onMouseLeave={() => setAddChildVisible(false)}>    
-                    { addChildVisible ? <TodoAdd onClick={addChild}/> : <div className='TodoItem_dummy'></div>  }     
+                <div className='TodoItem_panel TodoItem_panel--indented'>    
+                    <TodoAdd onClick={addChild}/>
                 </div>
             }
         </li>

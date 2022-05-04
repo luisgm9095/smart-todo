@@ -34,7 +34,7 @@ export const TodoList = ({
     return (
         <ul className={cn(className, 'TodoList')}>
             {items.map(item => <TodoItem key={item.id} item={item} addTodo={addTodo} getTodos={getTodos} updateTodo={updateTodo} deleteTodo={deleteTodo}/>)}
-            {alwaysShowAddChild && editMode && <li>
+            {alwaysShowAddChild && editMode && <li style={{display: 'flex'}}>
                 <TodoAdd onClick={addChild}/>
             </li>}
         </ul>
