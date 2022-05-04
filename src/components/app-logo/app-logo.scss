@@ -1,0 +1,40 @@
+@use '/src/variables.scss' as *;
+
+$logo-width: min(90vw - $icon-size - $icon-size, 80vmin);
+
+.AppLogo {
+  box-sizing: border-box;
+  position: absolute;
+  top: 0;
+  left: calc(50% - calc($logo-width / 2));
+  width: $logo-width;
+  max-width: $logo-width;
+  margin: $icon-margin;
+  height: $icon-size;
+  max-height: $icon-size;
+  padding: $icon-padding calc($icon-padding * 2);
+  border-radius: $icon-radius;
+  display: flex;
+  background-color: #2196F3;
+  transition: background-color 0.25s ease, fill 0.25s ease;
+  
+  &:hover {
+    background-color: #0176c3;
+    transition: background-color 0.25s ease, fill 0.25s ease;
+  }
+
+  &_input {
+    width: 100%;
+    height: 100%;
+    background-color: #0000;
+    color: #fff;
+    outline: unset;
+    border: unset;
+    font-size: $font-size-normal;
+    text-align: center;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

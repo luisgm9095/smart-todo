@@ -1,10 +1,18 @@
+@use '/src/variables.scss' as *;
+
+$checkbox-size: min(2rem, 6vmin);
+
 .Checkbox {
     position: relative;
     cursor: pointer;
-    width: 2rem;
-    height: 2rem;
+    width: $checkbox-size;
+    height: $checkbox-size;
+    min-width: $checkbox-size;
+    min-height: $checkbox-size;
+    max-width: $checkbox-size;
+    max-height: $checkbox-size;
     background-color: #eee;
-    font-size: 2rem;
+    font-size: $font-size-normal;
 
     &:hover {
         background-color: #ccc;
@@ -22,10 +30,10 @@
             content: "";
             display: block;
             position: absolute;
-            left: 0.6rem;
-            top: 0.2rem;
-            width: 0.5rem;
-            height: 1rem;
+            left: calc($checkbox-size * 0.3);
+            top: calc($checkbox-size * 0.1);
+            width: calc($checkbox-size * 0.25);
+            height: calc($checkbox-size * 0.5);
             border: solid white;
             border-width: 0 3px 3px 0;
             -webkit-transform: rotate(45deg);

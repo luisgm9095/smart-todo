@@ -1,27 +1,15 @@
-.TodoItemTitle {
-    &_input {
-        width: auto;
-        max-width: 50%;
-        font-size: 2rem;
-        color: #333;
-        border: none;
-        outline: none;
-        max-height: 2rem;
-    }
+@use '/src/variables.scss' as *;
 
-    &_label {
-        font-size: 2rem;
-        max-height: 2rem;
-        line-height: 2rem;
-        max-width: 50%;
-        width: auto;
-        text-align: start;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        
-        &--editable {
-            cursor: text;
-        }
-    }
+.TodoItemTitle {
+    box-sizing: border-box;
+    max-width: 100%;
+    font-size: $font-size-normal;
+    border: none;
+    outline: none;
+    max-height: 2rem;
+    color: #fff;
+    background-color: unset;
+    max-width: 100%;
+    padding-left: $gap;
+    padding-right: $gap;
 }

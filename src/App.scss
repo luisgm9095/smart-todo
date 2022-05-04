@@ -1,3 +1,5 @@
+@use '/src/variables.scss' as *;
+
 .App {
   text-align: center;
   background-color: #282c34;
@@ -5,11 +7,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: calc(10px + 2vmin);
+  font-size: 2rem;
   color: white;
 
   &_list {
-    padding-top: 10rem;
+    padding-top: calc($icon-size * 1.5);
     max-width: 80vmin;
     width: 80vmin;
     display: flex;
@@ -22,15 +24,15 @@
     position: fixed;
     top: 0;
     right: 0;
-    margin: 0.5rem;
-    padding: 1rem;
+    margin: $icon-margin;
+    padding: $icon-padding;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 5rem;
-    height: 5rem;
+    width: $icon-size;
+    height: $icon-size;
     background-color: #8884;
-    border-radius: 2.5rem;
+    border-radius: $icon-radius;
     cursor: pointer;
     fill: #fff4;
     transition: background-color 0.25s ease, fill 0.25s ease;
@@ -44,6 +46,11 @@
       background-color: #2196F3;
       fill: #fff;
       transition: background-color 0.25s ease, fill 0.25s ease;
+    }
+
+    & svg {
+        width: 100%;
+        height: 100%;
     }
   }
 }

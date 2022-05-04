@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { AddTodoCallback, addTodoChild, addTodoSibling, createTodo, hasTodoParentId, Todo, TodoId, updateTodo as updateTodoItem, deleteTodo as deleteTodoItem } from '../utils/todo';
+import { TodoListId } from '../utils/todo-list';
 import { useLocalStorage } from './use-local-storage';
 
-export const useTodo = (todoListId: string) => {
+export const useTodo = (todoListId: TodoListId) => {
     const [storedTodos, setStoredTodos] = useLocalStorage<Todo[]>(`todos_${todoListId}`, []);
     const [items, setItems] = useState<Todo[]>(storedTodos);
 
@@ -27,9 +28,21 @@ export const useTodo = (todoListId: string) => {
 
     useEffect(() => {
         if(storedTodos !== items) {
+            console.log(`changing storedTodos[${storedTodos.length}] to [${items.length}]`);
             setStoredTodos(items);
         }
     }, [items]);
+
+    useEffect(() => {
+        if(storedTodos !== items) {
+            setItems(storedTodos);
+        }
+    }, [storedTodos]);
+
+    useEffect(() => {
+        console.log(`storedTodos changed`);
+        console.log(storedTodos);
+    }, [storedTodos])
 
     return {
         addTodo,
