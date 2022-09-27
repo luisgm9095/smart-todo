@@ -34,13 +34,14 @@
             justify-content: flex-start;
             align-items: center;
             max-height: $icon-small-content;
-            max-width: calc(100% - $icon-small-content - 3 * $gap);
+            width: 100%;
+            max-width: 100%;//calc(100% - $icon-small-content - 3 * $gap);
         }
 
         &:hover {
             background: #8884;
 
-            & .TodoItem_delete {
+            & .TodoItem_delete, & .TodoItem_move {
                 fill: #fff8;
                 transition: fill 0.5s ease;
 
@@ -52,7 +53,7 @@
         }
     }
 
-    &_delete {
+    &_delete, &_move {
         width: $icon-small-content;
         height: $icon-small-content;
         max-width: $icon-small-content;

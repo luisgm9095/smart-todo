@@ -36,6 +36,12 @@ export type DeleteTodoParams = {
     deletedTodo: Todo
 };
 
+export type ReparentTodoParams = {
+    items: Todo[],
+    id: TodoId,
+    parentId: TodoId
+};
+
 export type AddTodoCallback = (params: AddTodoParams) => void;
 export type GetTodosCallback = (parentId?: TodoId) => Todo[];
 export type UpdateTodoCallback = (params: UpdateTodoParams) => void;
@@ -97,6 +103,28 @@ export const deleteTodo = ({ items, deletedTodo }: DeleteTodoParams): Todo[] => 
 
     return checkTodos
 };
+
+export const reparentTodo = ({ items, id, parentId }: ReparentTodoParams): Todo[] => {
+    const parent = items.find(hasTodoId(parentId)) as Todo;
+    const path = parent?.path || [];
+    let updatedTodos = items;
+    
+    if (id !== parentId && !path.some(el => el === id) && parent.parentId !== id) {
+        console.log('reparenting');
+        const reparentedTodos = items.map<Todo>((item) => ({
+            ...item,
+            parentId: item.id === id ? parentId : item.parentId,
+            path: item.path.some(el => el === parentId) ? [
+                ...path,
+                parentId,
+                ...item.path.slice(item.path.findIndex(el => el === id))
+            ] : item.path
+        }));
+        updatedTodos = checkTodo({ state: reparentedTodos, value: parent});
+    }
+    
+    return updatedTodos;
+}
 
 export const areDirectChildrenChecked = (id: TodoId, items: Todo[]): boolean =>
     items.filter(hasTodoParentId(id)).every(isChecked);

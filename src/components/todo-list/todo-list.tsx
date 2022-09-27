@@ -13,7 +13,8 @@ type TodoListProps = {
     addTodo: AddTodoCallback,
     getTodos: GetTodosCallback,
     updateTodo: (todo: Todo) => void,
-    deleteTodo: (todo: Todo) => void
+    deleteTodo: (todo: Todo) => void,
+    reparentTodo: (id: TodoId, parentId: TodoId) => void
 };
 
 export const TodoList = ({
@@ -23,7 +24,8 @@ export const TodoList = ({
     addTodo,
     getTodos,
     updateTodo,
-    deleteTodo
+    deleteTodo,
+    reparentTodo
 }: TodoListProps) => {
     const addChild = useCallback(() => {
         addTodo({});
@@ -33,7 +35,7 @@ export const TodoList = ({
 
     return (
         <ul className={cn(className, 'TodoList')}>
-            {items.map(item => <TodoItem key={item.id} item={item} addTodo={addTodo} getTodos={getTodos} updateTodo={updateTodo} deleteTodo={deleteTodo}/>)}
+            {items.map(item => <TodoItem key={item.id} item={item} addTodo={addTodo} getTodos={getTodos} updateTodo={updateTodo} deleteTodo={deleteTodo} reparentTodo={reparentTodo}/>)}
             {alwaysShowAddChild && editMode && <li style={{display: 'flex'}}>
                 <TodoAdd onClick={addChild}/>
             </li>}

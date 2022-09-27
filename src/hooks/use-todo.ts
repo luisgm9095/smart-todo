@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { AddTodoCallback, addTodoChild, addTodoSibling, createTodo, hasTodoParentId, Todo, TodoId, updateTodo as updateTodoItem, deleteTodo as deleteTodoItem } from '../utils/todo';
+import { AddTodoCallback, addTodoChild, addTodoSibling, createTodo, hasTodoParentId, Todo, TodoId, updateTodo as updateTodoItem, deleteTodo as deleteTodoItem, reparentTodo as reparentTodoItem } from '../utils/todo';
 import { TodoListId } from '../utils/todo-list';
 import { useLocalStorage } from './use-local-storage';
 
@@ -25,6 +25,8 @@ export const useTodo = (todoListId: TodoListId) => {
 
     const deleteTodo = useCallback((deletedTodo: Todo) => setItems((items) => deleteTodoItem({ items, deletedTodo})), []);
 
+    const reparentTodo = useCallback((id: TodoId, parentId: TodoId) => setItems((items) => reparentTodoItem({ items, id, parentId })), [])
+
     useEffect(() => {
         if(storedTodos !== items) {
             setStoredTodos(items);
@@ -41,6 +43,7 @@ export const useTodo = (todoListId: TodoListId) => {
         addTodo,
         getTodos,
         updateTodo,
-        deleteTodo
+        deleteTodo,
+        reparentTodo
     };
 };

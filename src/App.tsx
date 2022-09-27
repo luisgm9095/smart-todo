@@ -14,8 +14,8 @@ import { AppMenuIcon } from './components/app-menu-icon/app-menu-icon';
 
 export const App = () => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const { items, selectedItem, addItem, changeItem, deleteItem, selectItem } = useTodoList();
-  const { addTodo, getTodos, updateTodo, deleteTodo } = useTodo(selectedItem.id);
+  const { items, selectedItem, addItem, changeItem, deleteItem, selectItem, moveItem } = useTodoList();
+  const { addTodo, getTodos, updateTodo, deleteTodo, reparentTodo } = useTodo(selectedItem.id);
   const [editMode, setEditMode] = useState(true);
   const [selectedTodoId, setSelectedTodoId] = useState<TodoId>();
 
@@ -35,7 +35,7 @@ export const App = () => {
       <EditModeProvider value={{editMode}}>
         <div className="App">
           <div className="App_list">
-            <TodoList alwaysShowAddChild={true} addTodo={addTodo} getTodos={getTodos} updateTodo={updateTodo} deleteTodo={deleteTodo} />
+            <TodoList alwaysShowAddChild={true} addTodo={addTodo} getTodos={getTodos} updateTodo={updateTodo} deleteTodo={deleteTodo} reparentTodo={reparentTodo}/>
           </div>
         </div>
         <div className={cn('App_editmode', {'App_editmode--active':editMode})} onClick={() => setEditMode((prev) => !prev)}>
@@ -43,7 +43,7 @@ export const App = () => {
         </div>
         <AppLogo onChange={handleChangeTitle} value={selectedItem.title}/>
         <AppMenuIcon onClick={handleClickMenu}/>
-        <AppSideMenu visible={menuVisible} items={items} onAddItem={addItem} onClose={handleClickMenu} onDelete={deleteItem} onSelect={selectItem} selectedItemId={selectedItem.id} />
+        <AppSideMenu visible={menuVisible} items={items} onAddItem={addItem} onClose={handleClickMenu} onDelete={deleteItem} onSelect={selectItem} onMove={moveItem} selectedItemId={selectedItem.id} />
       </EditModeProvider>
     </SelectTodoProvider>
   );

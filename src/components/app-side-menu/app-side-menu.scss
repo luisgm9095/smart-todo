@@ -51,6 +51,10 @@ $menu-width: min(100vmin, max(30vmin, 500px));
         &--selected {
             background-color: #fff4;
         }
+
+        &--highlighted {
+            background-color: #fff6;
+        }
     }
 
     &_label {

@@ -3,7 +3,15 @@ import { not } from '../utils/functional';
 import { createTodoList, hasTodoListId, TodoList, TodoListId } from '../utils/todo-list';
 import { useLocalStorage } from './use-local-storage';
 
-export const useTodoList = () => {
+export const useTodoList = (): {
+    items: TodoList[],
+    selectedItem: TodoList,
+    addItem: () => void,
+    changeItem: (todoList: TodoList) => void,
+    deleteItem: (id: TodoListId) => void,
+    selectItem: (id: TodoListId) => void
+    moveItem: (id: TodoListId, targetId: TodoListId) => void
+} => {
     const [storedItems, setStoredItems] = useLocalStorage<TodoList[]>('todo-lists', [ createTodoList() ]);
     const [items, setItems] = useState(storedItems);
     const [selectedItem, setSelectedItem] = useState(items[0]);
@@ -40,6 +48,13 @@ export const useTodoList = () => {
         setItems(updatedItems);
     }, [items]);
 
+    const moveItem = useCallback((id: TodoListId, targetId: TodoListId) => {
+        id !== targetId && setItems((prev) => prev.reduce<TodoList[]>((acc, cur, _, array) => [
+            ...acc, 
+            ...(cur.id === targetId ? [array.find(el => el.id === id) as TodoList, cur] : cur.id === id ? [] : [cur])
+        ], []));
+    }, []);
+
     useEffect(() => {
         if(storedItems !== items) {
             setStoredItems(items);
@@ -52,6 +67,7 @@ export const useTodoList = () => {
         addItem,
         changeItem,
         deleteItem,
-        selectItem
+        selectItem,
+        moveItem
     };
 };

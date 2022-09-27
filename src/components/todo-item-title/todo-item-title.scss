@@ -2,14 +2,14 @@
 
 .TodoItemTitle {
     box-sizing: border-box;
-    max-width: 100%;
     font-size: $font-size-normal;
     border: none;
     outline: none;
-    max-height: 2rem;
+    //max-height: 2rem;
     color: #fff;
     background-color: unset;
     max-width: 100%;
+    width: 100%;
     padding-left: $gap;
     padding-right: $gap;
 }
