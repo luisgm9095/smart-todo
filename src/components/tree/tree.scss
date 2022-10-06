@@ -1,8 +1,10 @@
-.TodoList {
-    box-sizing: border-box;
+.Tree {
+    padding: 0;
+    margin: 0;
     width: 100%;
     list-style-type: none;
     display: flex;
     flex-direction: column;
     row-gap: 0.25rem;
+    box-sizing: border-box;
 }

@@ -1,4 +1,4 @@
-import { DragEvent } from 'react';
+import { DragEvent, useCallback } from 'react';
 
 type DragCallback = (event: DragEvent) => void;
 
@@ -32,21 +32,21 @@ export const useDraggable = <T extends string>(
     onDragLeave: DragCallback
 } => {
 
-    const onDragStart: DragCallback = (event) => {
+    const onDragStart: DragCallback = useCallback((event) => {
         event.dataTransfer?.setData(_FORMAT, `${context}${_SEPARATOR}${key}`);
-    }
+    }, []);
 
-    const onDrop: DragCallback = (event) => {
+    const onDrop: DragCallback = useCallback((event) => {
         checkDragEvent(event, context, onDropCallback);
-    }
+    }, [onDropCallback, context]);
 
-    const onDragEnter: DragCallback = (event) => {
+    const onDragEnter: DragCallback = useCallback((event) => {
         checkDragEvent(event, context, onDragEnterCallback);
-    }
+    }, [onDragEnterCallback, context]);
 
-    const onDragLeave: DragCallback = (event) => {
+    const onDragLeave: DragCallback = useCallback((event) => {
         checkDragEvent(event, context, onDragLeaveCallback);
-    }
+    }, [onDragLeaveCallback, context]);
 
     return {
         onDragOver: disableNativeDragOverEvent,

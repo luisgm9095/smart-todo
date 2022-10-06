@@ -1,5 +1,4 @@
 import cn from 'classnames';
-import { useState } from 'react';
 import { useEditModeContext } from '../../context/edit-mode';
 import { useDraggable } from '../../hooks/use-draggable';
 import { ReactComponent as DeleteIcon } from '../../trash.svg';

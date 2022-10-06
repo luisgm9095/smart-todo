@@ -1,6 +1,5 @@
 import cn from 'classnames';
 import { AppSideMenuItem } from '../app-side-menu-item/app-side-menu-item';
-import { TodoList, TodoListId } from '../../utils/todo-list';
 import { ReactComponent as BackIcon } from '../../menu.svg';
 import './app-side-menu.scss';
 

@@ -1,57 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
-import { StateReducer } from './state';
-
-export type TodoId = string;
-
-export type Todo = {
-    id: TodoId,
-    title: string,
-    checked: boolean,
-    parentId?: TodoId,
-    path: TodoId[]
-};
-
-export type AddTodoParams = {
-    parentId?: TodoId,
-    siblingId?: TodoId,
-};
-
-export type AddSiblingParams = {
-    items: Todo[],
-    siblingId: TodoId
-};
-
-export type AddChildParams = {
-    items: Todo[],
-    parentId: TodoId
-};
-
-export type UpdateTodoParams = {
-    items: Todo[],
-    updatedTodo: Todo
-};
-
-export type DeleteTodoParams = {
-    items: Todo[],
-    deletedTodo: Todo
-};
-
-export type ReparentTodoParams = {
-    items: Todo[],
-    id: TodoId,
-    parentId: TodoId
-};
-
-export type AddTodoCallback = (params: AddTodoParams) => void;
-export type GetTodosCallback = (parentId?: TodoId) => Todo[];
-export type UpdateTodoCallback = (params: UpdateTodoParams) => void;
+import { hasTreeNodeId, hasTreeNodeIdAtPath, orderTree } from './tree';
 
 export const createTodo = (parent?: Todo): Todo => ({
     id: uuidv4(),
     title: 'New Todo',
     checked: false,
     parentId: parent?.id,
-    path: parent ? [ ...parent.path, parent.id ] : []
+    path: parent ? [ ...parent.path, parent.id ] : [],
+    selected: false
 });
 
 export const hasTodoId = (id: TodoId) => (todo: Todo): boolean => todo.id === id;
@@ -62,7 +18,7 @@ export const isChecked = (todo: Todo): boolean => todo.checked;
 
 export const isUnchecked = (todo: Todo): boolean => !todo.checked;
 
-export const addTodoSibling = ({ items, siblingId }: AddSiblingParams): Todo[] => {
+export const addTodoSibling: StateReducer<Todo[], TodoId> = ({ state: items, value: siblingId }) => {
     const siblingIndex = items.findIndex(hasTodoId(siblingId));
     const sibling = items[siblingIndex];
     const parent = sibling.parentId ? items.find(hasTodoId(sibling.parentId)) : undefined;
@@ -77,15 +33,20 @@ export const addTodoSibling = ({ items, siblingId }: AddSiblingParams): Todo[] =
     return checkedTodos;
 };
 
-export const addTodoChild = ({ items, parentId }: AddChildParams): Todo[] => {
-    const parent = items.find(hasTodoId(parentId));
+export const addTodoChild: StateReducer<Todo[], TodoId>  = ({ state: items, value: parentId }) => {
+    const parentIndex = items.findIndex(hasTodoId(parentId));
+    const parent = items[parentIndex];
     const todo = createTodo(parent);
-    const updatedTodos = [ ...items, todo ];
-    const checkTodos = checkTodo({ state: updatedTodos, value: todo });
-    return checkTodos;
+    const updatedTodos = [
+        ...items.slice(0, parentIndex + 1),
+        todo,
+        ...items.slice(parentIndex + 1)
+    ];
+
+    return checkTodo({ state: updatedTodos, value: todo });
 };
 
-export const updateTodo = ({ items, updatedTodo }: UpdateTodoParams): Todo[] => {
+export const updateTodo: StateReducer<Todo[], Todo> = ({ state: items, value: updatedTodo }) => {
     const updatedTodoIndex = items.findIndex(hasTodoId(updatedTodo.id));
     const updatedTodos = [
         ...items.slice(0, updatedTodoIndex),
@@ -97,32 +58,39 @@ export const updateTodo = ({ items, updatedTodo }: UpdateTodoParams): Todo[] => 
     return checkedTodos;
 }
 
-export const deleteTodo = ({ items, deletedTodo }: DeleteTodoParams): Todo[] => {
+export const deleteTodo: StateReducer<Todo[], Todo> = ({ state: items, value: deletedTodo }) => {
     const updatedTodos = items.filter(({ id, path }) => id !== deletedTodo.id && !path.includes(deletedTodo.id));
     const checkTodos = checkTodo({ state: updatedTodos, value: deletedTodo });
 
     return checkTodos
 };
 
-export const reparentTodo = ({ items, id, parentId }: ReparentTodoParams): Todo[] => {
+export const reparentTodo: StateReducer<Todo[], ReparentTodoParams> = ({ state: items, value: {id, parentId} }) => {
+    const element = items.find(hasTodoId(id)) as Todo;
     const parent = items.find(hasTodoId(parentId)) as Todo;
     const path = parent?.path || [];
     let updatedTodos = items;
+    const haveSameParentId = element.parentId && element.parentId === parentId;
     
-    if (id !== parentId && !path.some(el => el === id) && parent.parentId !== id) {
-        console.log('reparenting');
-        const reparentedTodos = items.map<Todo>((item) => ({
-            ...item,
-            parentId: item.id === id ? parentId : item.parentId,
-            path: item.path.some(el => el === parentId) ? [
-                ...path,
-                parentId,
-                ...item.path.slice(item.path.findIndex(el => el === id))
-            ] : item.path
-        }));
-        updatedTodos = checkTodo({ state: reparentedTodos, value: parent});
+    if (!haveSameParentId && id !== parentId && !path.includes(id) && parent.parentId !== id) {
+        const reparentedTodos = items.map<Todo>((item) => {
+            const hasId = hasTreeNodeId(id)(item);
+            const hasIdAtPath = hasTreeNodeIdAtPath(id)(item);
+            return hasId || hasIdAtPath
+                ? {
+                    ...item,
+                    parentId: hasId ? parentId : item.parentId,
+                    path: [
+                        ...path,
+                        parentId,
+                        ...(hasIdAtPath ? item.path.slice(item.path.findIndex(el => el === id)) : [])
+                    ]
+                } as Todo
+                : item;
+        });
+        updatedTodos = orderTree(checkTodo({ state: reparentedTodos, value: parent}));
     }
-    
+
     return updatedTodos;
 }
 
@@ -138,3 +106,9 @@ export const checkTodo: StateReducer<Todo[], Todo> = ({ state: todos, value: tod
     .map((item) => item.path.includes(todo.id) ? { ...item, checked: true} : item)
     // Uncheck downtree all
     : todos.map((item) => item.path.includes(todo.id) || todo.path.includes(item.id) ? { ...item, checked: false} : item);
+
+export const selectItem = (selected: Todo) => (todo: Todo): Todo => selected.id === todo.id
+    ? { ...todo, selected: !todo.selected }
+    : (!todo.selected ? todo : { ...todo, selected: false});
+
+export const selectTodo: StateReducer<Todo[], Todo> = ({ state, value }) => state.map(selectItem(value));

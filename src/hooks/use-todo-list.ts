@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { not } from '../utils/functional';
-import { createTodoList, hasTodoListId, TodoList, TodoListId } from '../utils/todo-list';
+import { createTodoList, hasTodoListId } from '../utils/todo-list';
 import { useLocalStorage } from './use-local-storage';
 
 export const useTodoList = (): {
