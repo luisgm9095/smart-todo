@@ -26,5 +26,5 @@ export const addTreeNode = <T extends TreeNode>(nodes: Tree<T>, node: T): Tree<T
 }
 
 export const orderTree = <T extends TreeNode>(nodes: Tree<T>): Tree<T> => 
-    nodes.sort((a,b) => a.path.length - b.path.length).reduce<Tree<T>>((acc, curr) => addTreeNode(acc, curr), [] as Tree<T>)
+    nodes.sort((a,b) => a.path.length - b.path.length).reduce<Tree<T>>((acc, curr) => addTreeNode(acc, curr), [] as Tree<T>);
     

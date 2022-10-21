@@ -7,7 +7,9 @@ export const createTodo = (parent?: Todo): Todo => ({
     checked: false,
     parentId: parent?.id,
     path: parent ? [ ...parent.path, parent.id ] : [],
-    selected: false
+    selected: false,
+    collapsed: false,
+    visible: true
 });
 
 export const hasTodoId = (id: TodoId) => (todo: Todo): boolean => todo.id === id;
@@ -46,6 +48,17 @@ export const addTodoChild: StateReducer<Todo[], TodoId>  = ({ state: items, valu
     return checkTodo({ state: updatedTodos, value: todo });
 };
 
+const getCollapseMap = (todos: Todo[]): TreeNodeMap<boolean> =>
+    todos.reduce((prev, cur) =>({
+        ...prev,
+        [cur.id]: cur.collapsed
+    }), {});
+
+export const updateVisibility = (todosMap: TreeNodeMap<boolean>) => (todo: Todo): Todo => {
+    const visible = !todo.path.some(id => Boolean(todosMap[id]));
+    return visible === todo.visible ? todo : { ...todo, visible };
+};
+
 export const updateTodo: StateReducer<Todo[], Todo> = ({ state: items, value: updatedTodo }) => {
     const updatedTodoIndex = items.findIndex(hasTodoId(updatedTodo.id));
     const updatedTodos = [
@@ -54,9 +67,11 @@ export const updateTodo: StateReducer<Todo[], Todo> = ({ state: items, value: up
         ...items.slice(updatedTodoIndex + 1)
     ];
     const checkedTodos = checkTodo({state: updatedTodos, value: updatedTodo});
+    const collapseMap = getCollapseMap(checkedTodos); 
+    const visibleTodos = checkedTodos.map(updateVisibility(collapseMap));
     
-    return checkedTodos;
-}
+    return visibleTodos;
+};
 
 export const deleteTodo: StateReducer<Todo[], Todo> = ({ state: items, value: deletedTodo }) => {
     const updatedTodos = items.filter(({ id, path }) => id !== deletedTodo.id && !path.includes(deletedTodo.id));

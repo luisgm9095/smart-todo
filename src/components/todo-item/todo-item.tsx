@@ -8,6 +8,7 @@ import { Checkbox } from '../checkbox/checkbox';
 import { TodoItemTitle } from '../todo-item-title/todo-item-title';
 import { ReactComponent as DeleteIcon } from '../../trash.svg';
 import { ReactComponent as MoveIcon } from '../../menu.svg';
+import { ReactComponent as CollapseIcon } from '../../collapse.svg';
 import './todo-item.scss';
 
 type TodoItemProps = {
@@ -19,7 +20,7 @@ const TodoItem = ({
     className,
     item
 }: TodoItemProps) => {
-    const { title, id, checked, selected } = item;
+    const { title, id, checked, selected, collapsed, visible } = item;
     const { addTodo, updateTodo, deleteTodo, selectTodo, reparentTodo } = useEditTodoContext(); 
     const { editMode } = useEditModeContext();
     const onDropCallback = useCallback((otherId: TodoId) => reparentTodo({ id: otherId, parentId: id }), [id, reparentTodo]);
@@ -58,7 +59,15 @@ const TodoItem = ({
         deleteTodo(item);
     }, [deleteTodo, item]);
 
-    return (
+    const handleClickCollapse = useCallback((event: MouseEvent) => {
+        event.stopPropagation();
+        updateTodo({
+            ...item,
+            collapsed: !item.collapsed
+        });
+    }, [updateTodo, item])
+
+    return visible ? (
             <div className={cn(className, 'TodoItem', { 'TodoItem--editable': editMode, 'TodoItem--selected': selected })} onClick={handleClickItem}>
             { editMode && selected &&
                 <div className='TodoItem_panel'>
@@ -66,6 +75,9 @@ const TodoItem = ({
                 </div>
             }
             <div className='TodoItem_info'>
+                <div className={cn('TodoItem_collapse', { 'TodoItem_collapse--collapsed': collapsed })}>
+                    <CollapseIcon onClick={handleClickCollapse} />
+                </div>
                 <div className='TodoItem_info--group'>
                     <Checkbox checked={checked} onChange={handleCheck}/>
                     <TodoItemTitle title={title} onChange={handleChangeTitle} />
@@ -85,7 +97,7 @@ const TodoItem = ({
                 </div>
             }
         </div>
-    )
+    ) : null
 }
 
 export const renderTodo: TreeNodeRenderer<Todo> = (item) => <TodoItem item={item} />

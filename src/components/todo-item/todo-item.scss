@@ -5,6 +5,7 @@
     flex-direction: column;
     row-gap: 0.25rem;
     width: 100%;
+    margin-bottom: 0.25rem;
 
     &--editable {
         cursor: pointer;
@@ -54,7 +55,7 @@
         }
     }
 
-    &_delete, &_move {
+    &_delete, &_move, &_collapse {
         width: $icon-small-content;
         height: $icon-small-content;
         max-width: $icon-small-content;
@@ -64,6 +65,21 @@
         justify-content: center;
         align-items: center;
         transition: fill 0.5s ease;
+    }
+
+    &_collapse {
+        fill: #fff8;
+        transition: fill 0.5s ease;
+        transform: rotate(180deg);
+
+        &--collapsed {
+            transform: rotate(90deg);
+        }
+
+        &:hover {
+            fill: #fff;
+            transition: fill 0.5s ease;
+        }
     }
 
     &_children {
