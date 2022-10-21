@@ -1,18 +1,19 @@
 {
   "files": {
-    "main.css": "/smart-todo/static/css/main.42ccfb59.css",
-    "main.js": "/smart-todo/static/js/main.36ee723e.js",
+    "main.css": "/smart-todo/static/css/main.3560c6f0.css",
+    "main.js": "/smart-todo/static/js/main.1bb150aa.js",
     "static/js/787.0f962bc2.chunk.js": "/smart-todo/static/js/787.0f962bc2.chunk.js",
     "static/media/pencil.svg": "/smart-todo/static/media/pencil.f311f7bf3a6532bdca7716b8c590f474.svg",
     "index.html": "/smart-todo/index.html",
     "static/media/trash.svg": "/smart-todo/static/media/trash.48d6252f1512641bb60bd50f9180dce8.svg",
     "static/media/menu.svg": "/smart-todo/static/media/menu.dfc52a0777a5708718e9443645123faf.svg",
-    "main.42ccfb59.css.map": "/smart-todo/static/css/main.42ccfb59.css.map",
-    "main.36ee723e.js.map": "/smart-todo/static/js/main.36ee723e.js.map",
+    "static/media/collapse.svg": "/smart-todo/static/media/collapse.3020c45b9d0f30aac10fcc66a59a77c9.svg",
+    "main.3560c6f0.css.map": "/smart-todo/static/css/main.3560c6f0.css.map",
+    "main.1bb150aa.js.map": "/smart-todo/static/js/main.1bb150aa.js.map",
     "787.0f962bc2.chunk.js.map": "/smart-todo/static/js/787.0f962bc2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.42ccfb59.css",
-    "static/js/main.36ee723e.js"
+    "static/css/main.3560c6f0.css",
+    "static/js/main.1bb150aa.js"
   ]
 }
