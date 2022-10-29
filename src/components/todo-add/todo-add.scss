@@ -13,4 +13,11 @@
     &:hover {
         background: #8888;
     }
+
+    &--drag {
+        background-color: #2196F3;
+        &:hover {
+            background-color: #2196F3;
+        }
+    }
 }

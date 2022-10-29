@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { not } from './functional';
 import { hasTreeNodeId, hasTreeNodeIdAtPath, orderTree } from './tree';
 
 export const createTodo = (parent?: Todo): Todo => ({
@@ -12,13 +13,27 @@ export const createTodo = (parent?: Todo): Todo => ({
     visible: true
 });
 
+
 export const hasTodoId = (id: TodoId) => (todo: Todo): boolean => todo.id === id;
+
+export const getTodoById = (id: TodoId) => (todos: Todo[]): Todo => todos.find(hasTodoId(id)) as Todo;
 
 export const hasTodoParentId = (parentId?: TodoId) => (todo: Todo): boolean => (!parentId && !todo.parentId) || todo.parentId === parentId;
 
 export const isChecked = (todo: Todo): boolean => todo.checked;
 
 export const isUnchecked = (todo: Todo): boolean => !todo.checked;
+
+export const getLastDirectChildIndex = (id: TodoId) => (todos: Todo[]): number => {
+    let result = todos.findIndex(hasTodoId(id));
+    for (let i = todos.length - 1; i >= 0; i--) {
+        if (todos[i].parentId === id) {
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
 
 export const addTodoSibling: StateReducer<Todo[], TodoId> = ({ state: items, value: siblingId }) => {
     const siblingIndex = items.findIndex(hasTodoId(siblingId));
@@ -80,12 +95,33 @@ export const deleteTodo: StateReducer<Todo[], Todo> = ({ state: items, value: de
     return checkTodos
 };
 
-export const reparentTodo: StateReducer<Todo[], ReparentTodoParams> = ({ state: items, value: {id, parentId} }) => {
-    const element = items.find(hasTodoId(id)) as Todo;
-    const parent = items.find(hasTodoId(parentId)) as Todo;
-    const path = parent?.path || [];
+export const reparentTodoGlobal: StateReducer<Todo[], { id: TodoId }> = ({ state: items, value: { id }}) => {
+    const element = getTodoById(id)(items);
     let updatedTodos = items;
+    
+    // Only compute changes if element had a parentId previously
+    if (element.parentId) {
+        const reparentedTodos = items.map((item) => {
+            const hasId = hasTreeNodeId(id)(item);
+            const hasIdAtPath = hasTreeNodeIdAtPath(id)(item);
+            return hasId || hasIdAtPath ? {
+                ...item,
+                parentId: hasId ? undefined : item.parentId,
+                path: hasIdAtPath ? item.path.slice(item.path.findIndex(el => el === id)) : []
+            } as Todo : item
+        });
+        updatedTodos = orderTree(checkTodo({ state: reparentedTodos, value: element}));
+    }
+
+    return updatedTodos;
+};
+
+export const reparentTodoItem: StateReducer<Todo[], { id: TodoId, parentId: TodoId }> = ({ state: items, value: {id, parentId } }) => {
+    const element = getTodoById(id)(items);
+    const parent = getTodoById(parentId)(items);
+    const path = parent?.path || [];
     const haveSameParentId = element.parentId && element.parentId === parentId;
+    let updatedTodos = items;
     
     if (!haveSameParentId && id !== parentId && !path.includes(id) && parent.parentId !== id) {
         const reparentedTodos = items.map<Todo>((item) => {
@@ -109,6 +145,22 @@ export const reparentTodo: StateReducer<Todo[], ReparentTodoParams> = ({ state: 
     return updatedTodos;
 }
 
+export const reparentTodoSibling: StateReducer<Todo[], { id: TodoId, siblingId: TodoId }> = ({ state: items, value: { id, siblingId }}) => {
+    const parentId = getTodoById(siblingId)(items).parentId;
+    const reparentedTodos = parentId ? reparentTodoItem({ state: items, value: { id, parentId }}) : reparentTodoGlobal({ state: items, value: { id }});
+    // REORDERING
+    const elementIndex = reparentedTodos.findIndex(hasTodoId(id));
+    const element = reparentedTodos[elementIndex];
+    const extractedTodos = reparentedTodos.filter(not(hasTodoId(element.id)));
+    const siblingIndex = extractedTodos.findIndex(hasTodoId(siblingId));
+    const reindexedTodos = [
+        ...extractedTodos.slice(0,siblingIndex),
+        element,
+        ...extractedTodos.slice(siblingIndex, extractedTodos.length)
+    ];
+    return orderTree(reindexedTodos);
+};
+
 export const areDirectChildrenChecked = (id: TodoId, items: Todo[]): boolean =>
     items.filter(hasTodoParentId(id)).every(isChecked);
 
@@ -123,7 +175,7 @@ export const checkTodo: StateReducer<Todo[], Todo> = ({ state: todos, value: tod
     : todos.map((item) => item.path.includes(todo.id) || todo.path.includes(item.id) ? { ...item, checked: false} : item);
 
 export const selectItem = (selected: Todo) => (todo: Todo): Todo => selected.id === todo.id
-    ? { ...todo, selected: !todo.selected }
+    ? { ...todo, selected: true }
     : (!todo.selected ? todo : { ...todo, selected: false});
 
 export const selectTodo: StateReducer<Todo[], Todo> = ({ state, value }) => state.map(selectItem(value));

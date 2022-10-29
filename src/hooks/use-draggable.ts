@@ -1,12 +1,20 @@
 import { DragEvent, useCallback } from 'react';
 
-type DragCallback = (event: DragEvent) => void;
+/// TYPES
+
+type DragCallback<T extends Element = Element> = (event: DragEvent<T>) => void;
+
+/// CONSTANTS
 
 const _SEPARATOR = '/';
 const _FORMAT = 'text';
 const _DEFAULT_CALLBACK = (): void => void 0;
+
+/// UTILS
+
 const disableNativeDragOverEvent: DragCallback = (event) => event.preventDefault();
-const checkDragEvent = <T extends string>(event: DragEvent, context: string, callback: (key: T) => void) => {
+const isDragEventInsideParent = <T extends Element = Element>(event: DragEvent<T>) => event.currentTarget.contains(event.relatedTarget as EventTarget & T);
+const handleDropEvent = <T extends string>(event: DragEvent, context: string, callback: (key: T) => void) => {
     const data = event.dataTransfer?.getData(_FORMAT).split(_SEPARATOR);
     
     if (data.length > 1) {
@@ -14,16 +22,19 @@ const checkDragEvent = <T extends string>(event: DragEvent, context: string, cal
 
         if(droppedContext === context) {
             callback(droppedKey as T);
+            event.stopPropagation();
         }
     }
 };
+
+/// HOOK
 
 export const useDraggable = <T extends string>(
     key: T,
     context: string,
     onDropCallback: (key: T) => void = _DEFAULT_CALLBACK,
-    onDragEnterCallback: (key: T) => void = _DEFAULT_CALLBACK,
-    onDragLeaveCallback: (key: T) => void = _DEFAULT_CALLBACK
+    onDragEnterCallback: () => void = _DEFAULT_CALLBACK,
+    onDragLeaveCallback: () => void = _DEFAULT_CALLBACK
 ): {
     onDragOver: DragCallback,
     onDragStart: DragCallback,
@@ -37,16 +48,20 @@ export const useDraggable = <T extends string>(
     }, []);
 
     const onDrop: DragCallback = useCallback((event) => {
-        checkDragEvent(event, context, onDropCallback);
+        handleDropEvent(event, context, onDropCallback);
     }, [onDropCallback, context]);
 
     const onDragEnter: DragCallback = useCallback((event) => {
-        checkDragEvent(event, context, onDragEnterCallback);
-    }, [onDragEnterCallback, context]);
+        !isDragEventInsideParent(event) && onDragEnterCallback();
+        event.stopPropagation();
+        event.preventDefault();
+    }, [onDragEnterCallback]);
 
     const onDragLeave: DragCallback = useCallback((event) => {
-        checkDragEvent(event, context, onDragLeaveCallback);
-    }, [onDragLeaveCallback, context]);
+        !isDragEventInsideParent(event) && onDragLeaveCallback();
+        event.stopPropagation();
+        event.preventDefault();
+    }, [onDragLeaveCallback]);
 
     return {
         onDragOver: disableNativeDragOverEvent,

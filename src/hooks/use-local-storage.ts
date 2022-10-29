@@ -2,22 +2,25 @@ import { useCallback, useEffect, useState } from 'react';
 
 type StateSetter<T> = (value: T | ((val: T) => T)) => void;
 
-const readStorage = <T>(key: string, defaultValue: T): T => {
+const mapLocalDefault = <T, U = T>(value: U): T => (value as unknown) as T;
+
+const readStorage = <T, U = T>(key: string, defaultValue: T, mapFunction: (_:U) => T): T => {
     try {
         const item = window.localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
+        return item ? mapFunction(JSON.parse(item)) : defaultValue;
     } catch (error) {
         console.log(error);
         return defaultValue;
     }
 };
 
-export const useLocalStorage = <T>(
+export const useLocalStorage = <T, U = T>(
     key: string, 
-    initialValue: T
+    initialValue: T,
+    mapFunction: (_:U) => T = mapLocalDefault
 ): [T, StateSetter<T>] => {
     const [storedKey, setStoredKey] = useState(key);
-    const [storedValue, setStoredValue] = useState<T>(() => readStorage(key, initialValue));
+    const [storedValue, setStoredValue] = useState<T>(() => readStorage(key, initialValue, mapFunction));
 
     const setValue: StateSetter<T> = useCallback((value) => {
         try {
@@ -32,7 +35,7 @@ export const useLocalStorage = <T>(
     useEffect(() => {
         if(key !== storedKey) {
             setStoredKey(key);
-            setStoredValue(readStorage(key, initialValue))
+            setStoredValue(readStorage(key, initialValue, mapFunction))
         }
     }, [key, initialValue]);
 

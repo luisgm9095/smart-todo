@@ -13,8 +13,9 @@ type AddTodoParams = {
 
 type ReparentTodoParams = {
     id: TodoId,
-    parentId: TodoId
-}
+    parentId?: TodoId,
+    siblingId?: TodoId
+};
 
 type TodoCallback = (todo: Todo) => void;
 type AddTodoCallback = (params: AddTodoParams) => void;

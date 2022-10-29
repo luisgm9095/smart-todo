@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { EditModeProvider } from './context/edit-mode';
 import { EditTodoProvider } from './context/edit-todo';
 import { useTodo } from './hooks/use-todo';
@@ -9,7 +9,6 @@ import { AppSideMenu } from './components/app-side-menu/app-side-menu';
 import { AppMenuIcon } from './components/app-menu-icon/app-menu-icon';
 import { Tree } from './components/tree/tree';
 import { TodoAdd } from './components/todo-add/todo-add';
-import { useKeyPress } from './hooks/use-keypress';
 import { renderTodo } from './components/todo-item/todo-item';
 import cn from 'classnames';
 import './App.scss';
@@ -31,26 +30,16 @@ export const App = () => {
     });
   }, [changeItem, selectedItem]);
 
-  const handleClickTodoAdd = useCallback(() => addTodo({}), [addTodo])
-
   const editModeContextValue = useMemo(() => ({editMode}), [editMode]);
   const editTodoContextValue = useMemo(() => ({ addTodo, updateTodo, deleteTodo, selectTodo, reparentTodo }), [addTodo, updateTodo, deleteTodo, selectTodo, reparentTodo]);
 
-  const keyPressedCreateNewTodo = useKeyPress('n', false, true);
-
-  useEffect (() => {
-    if(keyPressedCreateNewTodo) {
-      handleClickTodoAdd();
-    }
-  }, [keyPressedCreateNewTodo]);
-  
   return (
     <EditTodoProvider value={editTodoContextValue}>
       <EditModeProvider value={editModeContextValue}>
         <div className='App'>
           <div className='App_list'>
             <Tree tree={tree} renderComponent={renderTodo} memoized={true}/>
-            { editMode && <TodoAdd onClick={handleClickTodoAdd}/> }
+            { editMode && <TodoAdd mode='empty'/> }
           </div>
         </div>
         <div className={cn('App_editmode', {'App_editmode--active':editMode})} onClick={() => setEditMode((prev) => !prev)}>

@@ -1,14 +1,16 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, CSSProperties, useEffect, useState } from 'react';
 import { useEditModeContext } from '../../context/edit-mode';
 import './todo-item-title.scss';
 
 type TodoItemTitleProps = {
     title: string,
-    onChange: (value: string) => void
+    style?: CSSProperties,
+    onChange: (value: string) => void,
 }
 
 export const TodoItemTitle = ({
     title,
+    style,
     onChange
 }: TodoItemTitleProps) => {
     const { editMode } = useEditModeContext();
@@ -26,5 +28,5 @@ export const TodoItemTitle = ({
         setEditedValue(title);
     }, [title])
 
-    return <input title={title} disabled={!editMode} className='TodoItemTitle' autoFocus type='text' value={editedValue} onChange={handleChangeInput} onBlur={handleBlurInput}/>
+    return <input title={title} disabled={!editMode} className='TodoItemTitle' autoFocus type='text' value={editedValue} onChange={handleChangeInput} onBlur={handleBlurInput} style={style}/>
 }

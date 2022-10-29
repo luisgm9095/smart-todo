@@ -1,0 +1,1 @@
+type TodoLocal = Partial<Todo>;
