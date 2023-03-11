@@ -2,9 +2,23 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## First steps
 
-In the project directory, you can run:
+You have [Node](https://nodejs.dev/en/learn/how-to-install-nodejs/) and [yarn](https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable) installed on your system.
+
+You can check this first setup programs by running:
+
+```bash
+node --version
+yarn --version
+```
+
+With these main dependencies installed, proceed to install the rest of project dependencies with:
+```bash
+yarn install
+``` 
+
+## Available commands
 
 ### `yarn start`
 
